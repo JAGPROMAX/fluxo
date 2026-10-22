@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluxo · Tu dinero, con dirección</title>
+<meta name="description" content="Fluxo: la app de finanzas personales y de negocio hecha para Venezuela. Dólares y bolívares, tasa BCV automática, metas, deudas y tu futuro en una sola app.">
+<meta name="theme-color" content="#0B0A10">
+<meta property="og:title" content="Fluxo · Tu dinero, con dirección">
+<meta property="og:description" content="Finanzas personales y de negocio para Venezuela, en $ y Bs. Descarga gratis para Android.">
+<meta property="og:image" content="https://jagpromax.github.io/fluxo/img/icon.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0A10;--surface:#15131D;--raised:#1C1927;--sunk:#211E2E;--line:#2B2739;
+  --fg:#F4F2FA;--muted:#9C95B2;--faint:#6C6682;
+  --brand:#8B6CFF;--brand2:#5B3DF5;--hot:#FF6B57;--good:#3DDC97;--warn:#FFB547;
+  --display:'Barlow Condensed',system-ui,sans-serif;--body:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-weight:500;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 20px}
+.display{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;line-height:.92;letter-spacing:.01em}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.x{color:var(--hot)}
+
+/* Fondo: los flujos de la marca, enormes y lentos */
+.bg-flows{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.bg-flows svg{position:absolute;width:140vw;height:140vh;left:-20vw;top:-20vh}
+.flow{fill:none;stroke-linecap:round;stroke-dasharray:2400;stroke-dashoffset:2400;animation:draw 3.2s cubic-bezier(.2,.7,.2,1) forwards, drift 18s ease-in-out 3.2s infinite alternate}
+.flow.a{stroke:var(--brand);stroke-width:120;opacity:.13}
+.flow.b{stroke:var(--fg);stroke-width:90;opacity:.035;animation-delay:.3s,3.5s}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes drift{to{transform:translate(-3vw,2vh)}}
+.glow{position:fixed;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(139,108,255,.22),transparent 60%);top:-380px;right:-260px;z-index:-1;pointer-events:none}
+
+/* Barra */
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(11,10,16,.72);border-bottom:1px solid rgba(43,39,57,.6)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand .wm{font-family:var(--display);font-weight:800;font-style:italic;font-size:28px;letter-spacing:.02em}
+.nav a.cta{font-weight:700;font-size:14px;text-decoration:none;padding:10px 16px;border-radius:12px;background:var(--brand);color:#0B0A10;transition:transform .15s}
+.nav a.cta:hover{transform:translateY(-1px)}
+
+/* Héroe */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:72px 0 40px}
+.hero h1{font-size:clamp(56px,9vw,112px)}
+.hero h1 .line{display:block}
+.hero p.lead{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:520px;margin:22px 0 30px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+.chip{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;background:var(--sunk);color:var(--fg);border:1px solid var(--line)}
+.chip b{color:var(--good)}
+.dl{display:inline-flex;align-items:center;gap:14px;padding:18px 26px;border-radius:18px;background:linear-gradient(135deg,#A48BFF,#7B5CFF 55%,#5B3DF5);color:#0B0A10;text-decoration:none;font-weight:800;font-size:18px;box-shadow:0 10px 40px rgba(139,108,255,.45),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .2s, box-shadow .2s;position:relative;overflow:hidden}
+.dl:hover{transform:translateY(-2px);box-shadow:0 16px 56px rgba(139,108,255,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.dl::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-100%);animation:shine 3.6s ease-in-out 2s infinite}
+@keyframes shine{40%,100%{transform:translateX(100%)}}
+.dl small{display:block;font-size:12px;font-weight:700;opacity:.75}
+.meta{margin-top:14px;font-size:13px;color:var(--faint)}
+.meta a{color:var(--muted)}
+
+/* Teléfono */
+.phone-stage{position:relative;display:flex;justify-content:center;perspective:1400px}
+.phone{width:300px;aspect-ratio:9/19.5;border-radius:44px;background:#05040A;padding:11px;box-shadow:0 0 0 2px #2B2739,0 40px 120px rgba(91,61,245,.35),0 0 80px rgba(255,107,87,.08);transform:rotateY(-14deg) rotateX(4deg);transition:transform .6s cubic-bezier(.2,.7,.2,1);position:relative}
+.phone:hover{transform:rotateY(-4deg) rotateX(2deg)}
+.screen{width:100%;height:100%;border-radius:34px;overflow:hidden;position:relative;background:var(--bg)}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .9s ease}
+.screen img.on{opacity:1}
+.notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:84px;height:22px;border-radius:12px;background:#05040A;z-index:2}
+.coin{position:absolute;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFB3A6,#FF6B57 45%,#E9503F);top:6%;right:12%;box-shadow:0 0 50px rgba(255,107,87,.55);animation:float 5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-14px)}}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:18px}
+.dots i{width:7px;height:7px;border-radius:4px;background:var(--line);transition:all .3s}
+.dots i.on{width:22px;background:var(--brand)}
+.caption{text-align:center;color:var(--muted);font-size:14px;margin-top:10px;min-height:22px}
+
+/* Cifras */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:40px 0 90px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px}
+.stat b{font-family:var(--display);font-weight:700;font-size:44px;line-height:1;display:block}
+.stat span{color:var(--muted);font-size:14px}
+
+/* Secciones */
+section{padding:20px 0 90px}
+.sec-head{max-width:720px;margin-bottom:36px}
+.sec-head h2{font-size:clamp(40px,6vw,72px);margin:10px 0 14px}
+.sec-head p{color:var(--muted);font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:#3b3550}
+.card .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(139,108,255,.14);margin-bottom:16px}
+.card .ico svg{width:24px;height:24px;stroke:var(--brand);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card.hot .ico{background:rgba(255,107,87,.14)}.card.hot .ico svg{stroke:var(--hot)}
+.card.good .ico{background:rgba(61,220,151,.14)}.card.good .ico svg{stroke:var(--good)}
+.card h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.card p{color:var(--muted);font-size:15px}
+.card .new{position:absolute;top:18px;right:18px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--hot);background:rgba(255,107,87,.12);padding:4px 9px;border-radius:999px}
+.card.big{grid-column:span 2;display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center}
+.card.big img{border-radius:18px;border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+
+/* Galería */
+.gallery{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 20px 30px;margin:0 -20px;scrollbar-width:none}
+.gallery::-webkit-scrollbar{display:none}
+.shot{flex:0 0 230px;scroll-snap-align:center}
+.shot .frame{border-radius:30px;padding:8px;background:#05040A;box-shadow:0 0 0 1.5px #2B2739,0 24px 60px rgba(0,0,0,.45)}
+.shot img{border-radius:23px;aspect-ratio:9/19.5;object-fit:cover;object-position:top;width:100%}
+.shot p{text-align:center;margin-top:12px;font-weight:700;font-size:14px}
+
+/* Seguridad */
+.secure{background:linear-gradient(135deg,#2B1F63,#191530 55%,#100E18);border:1px solid var(--line);border-radius:32px;padding:44px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;overflow:hidden;position:relative}
+.secure ul{list-style:none;display:grid;gap:14px}
+.secure li{display:flex;gap:12px;align-items:flex-start}
+.secure li svg{flex:0 0 22px;width:22px;height:22px;stroke:var(--good);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+.secure li b{display:block}
+.secure li span{color:var(--muted);font-size:15px}
+.lock{width:180px;height:180px;margin:0 auto;border-radius:48px;background:linear-gradient(135deg,#A48BFF,#7B5CFF 55%,#5B3DF5);display:grid;place-items:center;box-shadow:0 30px 90px rgba(139,108,255,.5);position:relative}
+.lock svg{width:90px;height:90px;stroke:#0B0A10;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ring{position:absolute;inset:-18px;border-radius:60px;border:2px solid rgba(139,108,255,.35);animation:pulse 2.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.92);opacity:1}100%{transform:scale(1.18);opacity:0}}
+
+/* Descarga */
+.download{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
+.steps{display:grid;gap:12px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 20px 20px 70px;position:relative;counter-increment:s}
+.step::before{content:counter(s);position:absolute;left:20px;top:18px;width:34px;height:34px;border-radius:11px;background:var(--brand);color:#0B0A10;font-family:var(--display);font-weight:800;font-size:22px;display:grid;place-items:center}
+.step b{display:block;margin-bottom:2px}
+.step span{color:var(--muted);font-size:15px}
+.qr{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.qr #qr{background:#fff;border-radius:16px;padding:12px;width:190px;height:190px}
+.qr #qr svg{width:100%;height:100%}
+.verify{margin-top:12px;background:var(--sunk);border-radius:14px;padding:12px 14px;font-size:12.5px;color:var(--muted);word-break:break-all;text-align:left;width:100%}
+.verify code{font-family:ui-monospace,Consolas,monospace;color:var(--fg);font-size:11.5px}
+
+/* Preguntas */
+details{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::after{content:'+';color:var(--brand);font-size:22px;line-height:1;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:10px}
+
+footer{border-top:1px solid var(--line);padding:36px 0 50px;color:var(--faint);font-size:14px}
+footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+
+/* Aparición al bajar */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:40px;text-align:left}
+  .phone{width:260px;transform:none}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid{grid-template-columns:1fr 1fr}
+  .card.big{grid-column:span 2}
+  .secure,.download{grid-template-columns:1fr}
+  .secure{padding:28px}
+}
+@media (max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .card.big{grid-column:auto;grid-template-columns:1fr}
+  .card.big img{max-width:220px;margin:0 auto}
+  .dl{width:100%;justify-content:center}
+  .nav a.cta{padding:9px 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .flow{stroke-dashoffset:0}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="bg-flows" aria-hidden="true">
+  <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+    <path class="flow b" d="M200 520 C520 520 640 900 1020 900"/>
+    <path class="flow a" d="M200 900 C560 900 640 160 1500 160"/>
+  </svg>
+</div>
+<div class="glow" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#" aria-label="Fluxo">
+      <svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="t" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A48BFF"/><stop offset=".55" stop-color="#7B5CFF"/><stop offset="1" stop-color="#5B3DF5"/></linearGradient>
+        <radialGradient id="c" cx="47.5" cy="15.5" r="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFB3A6"/><stop offset=".45" stop-color="#FF6B57"/><stop offset="1" stop-color="#E9503F"/></radialGradient></defs>
+        <rect width="64" height="64" rx="19" fill="url(#t)"/>
+        <g transform="translate(-1.5 1.5)"><path d="M14 32 C22 32 26 46 38 46" fill="none" stroke="#0B0A10" stroke-width="7" stroke-linecap="round" opacity=".42"/><path d="M14 46 C24 46 26 18 50 18" fill="none" stroke="url(#t)" stroke-width="12" stroke-linecap="round"/><path d="M14 46 C24 46 26 18 50 18" fill="none" stroke="#0B0A10" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="18" r="6.6" fill="url(#c)"/></g>
+      </svg>
+      <span class="wm">FLU<span class="x">X</span>O</span>
+    </a>
+    <a class="cta" href="#descargar">Descargar</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Hecha para Venezuela · Gratis para Android</div>
+        <h1 class="display" style="margin-top:14px"><span class="line">Tu dinero,</span><span class="line">con <span class="x">dirección.</span></span></h1>
+        <p class="lead">Dólares y bolívares en una sola app. Fluxo sabe dónde está tu dinero, te avisa antes de que te quedes corto y te muestra cómo crece tu futuro.</p>
+        <div class="chips">
+          <span class="chip">Tasa <b>BCV</b> automática</span>
+          <span class="chip">Personal y negocio</span>
+          <span class="chip">Funciona sin internet</span>
+          <span class="chip">Datos cifrados</span>
+        </div>
+        <a class="dl" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk" download>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B0A10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
+          <span>Descargar Fluxo<small>Android · versión 1.3 · 36 MB</small></span>
+        </a>
+        <div class="meta">Android 7 o superior · <a href="#instalar">Cómo instalarla</a> · <a href="https://github.com/JAGPROMAX/fluxo/releases">Todas las versiones</a></div>
+      </div>
+      <div>
+        <div class="phone-stage">
+          <div class="coin" aria-hidden="true"></div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="screen" id="screen">
+              <img class="on" src="img/inicio.webp" alt="Inicio de Fluxo: saldo del mes, racha y línea del mes" data-cap="Tu mes de un vistazo">
+              <img src="img/30dias.webp" alt="Proyección de los próximos 30 días" data-cap="Sabe cuándo te quedarías corto" loading="lazy">
+              <img src="img/futuro.webp" alt="Fluxo Futuro: patrimonio en 1, 5 y 10 años" data-cap="Mira tu dinero en 10 años" loading="lazy">
+              <img src="img/termometro.webp" alt="Termómetro del dólar BCV y paralelo" data-cap="El dólar, explicado" loading="lazy">
+              <img src="img/auto.webp" alt="Pago detectado desde la notificación del banco" data-cap="Registra solo tus pagos" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="dots" id="dots"></div>
+        <div class="caption" id="cap">Tu mes de un vistazo</div>
+      </div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat"><b>$ + Bs</b><span>Cada movimiento en su moneda, con la tasa del día</span></div>
+      <div class="stat"><b>30 días</b><span>De anticipación para ver si te alcanza</span></div>
+      <div class="stat"><b>16</b><span>Lecciones de finanzas con quiz y logros</span></div>
+      <div class="stat"><b>AES-256</b><span>Cifrado de tus datos en el teléfono</span></div>
+    </div>
+
+    <section>
+      <div class="sec-head reveal">
+        <div class="eyebrow">Lo que hace</div>
+        <h2 class="display">Más que anotar <span class="x">gastos.</span></h2>
+        <p>Fluxo piensa contigo: mira tus números, se adelanta a los problemas y te enseña a crecer.</p>
+      </div>
+      <div class="grid">
+        <div class="card big reveal">
+          <div>
+            <span class="new">Nuevo</span>
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zM4 10h16M8 4v4M16 4v4"/></svg></div>
+            <h3>Tus próximos 30 días</h3>
+            <p>Fluxo junta tu sueldo, tus pagos fijos, tus cuotas y lo que sueles gastar, y te muestra día por día cuánto tendrás. Si algún día te quedarías en rojo, te avisa con tiempo.</p>
+          </div>
+          <img src="img/30dias.webp" alt="" loading="lazy">
+        </div>
+        <div class="card hot reveal">
+          <span class="new">Nuevo</span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg></div>
+          <h3>Registro automático</h3>
+          <p>Haces un pago móvil y Fluxo te propone el gasto ya lleno con la notificación de tu banco. Solo tocas «Guardar».</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-8"/><path d="M15 7h5v5"/></svg></div>
+          <h3>Fluxo Futuro</h3>
+          <p>Mueve una barra y mira cuánto tendrías en 1, 5 y 10 años, y cuánto cambia si ahorras $20 más al mes.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11v4M4 7v10a2 2 0 0 0 2 2h14V9H6a2 2 0 0 1-2-2z"/></svg></div>
+          <h3>Billeteras y cambios</h3>
+          <p>Efectivo, banco, pago móvil, Zelle o Binance: el saldo de cada una y el total. Al cambiar dólares te dice a qué tasa cambiaste.</p>
+        </div>
+        <div class="card hot reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95M19 4.5V8h-3.5"/></svg></div>
+          <h3>Termómetro del dólar</h3>
+          <p>BCV y paralelo con historial, la brecha entre ambos y cuánto perdieron tus bolívares este mes.</p>
+        </div>
+        <div class="card good reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/></svg></div>
+          <h3>Sal de deudas</h3>
+          <p>Tarjetas, Cashea o préstamos con plan avalancha o bola de nieve: en cuántos meses sales y cuánto ahorras en intereses.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg></div>
+          <h3>Metas, redondeo y familia</h3>
+          <p>Cada gasto se redondea al dólar para tu meta, y tu familia en el exterior puede ver cómo avanza lo que apoya.</p>
+        </div>
+        <div class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg></div>
+          <h3>Facturas para el contador</h3>
+          <p>Fotografía las facturas de tu negocio; Fluxo separa el IVA y arma el libro de compras del mes.</p>
+        </div>
+        <div class="card good reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-4 9 4-9 4z"/><path d="M7 11v5c0 1.5 2.5 3 5 3s5-1.5 5-3v-5"/></svg></div>
+          <h3>Aprende jugando</h3>
+          <p>Lecciones cortas, quiz, rachas y logros. Como una app de ejercicio, pero para tu dinero.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head reveal">
+        <div class="eyebrow">Así se ve</div>
+        <h2 class="display">Oscura, rápida, <span class="x">tuya.</span></h2>
+      </div>
+      <div class="gallery reveal">
+        <div class="shot"><div class="frame"><img src="img/inicio.webp" alt="Inicio" loading="lazy"></div><p>Inicio</p></div>
+        <div class="shot"><div class="frame"><img src="img/billeteras.webp" alt="Billeteras" loading="lazy"></div><p>Billeteras</p></div>
+        <div class="shot"><div class="frame"><img src="img/30dias.webp" alt="Próximos 30 días" loading="lazy"></div><p>Próximos 30 días</p></div>
+        <div class="shot"><div class="frame"><img src="img/futuro.webp" alt="Fluxo Futuro" loading="lazy"></div><p>Fluxo Futuro</p></div>
+        <div class="shot"><div class="frame"><img src="img/deudas.webp" alt="Plan de deudas" loading="lazy"></div><p>Plan de deudas</p></div>
+        <div class="shot"><div class="frame"><img src="img/termometro.webp" alt="Termómetro del dólar" loading="lazy"></div><p>Termómetro del dólar</p></div>
+        <div class="shot"><div class="frame"><img src="img/facturas.webp" alt="Facturas" loading="lazy"></div><p>Facturas</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="secure reveal">
+        <div>
+          <div class="eyebrow">Seguridad</div>
+          <h2 class="display" style="font-size:clamp(40px,5.5vw,64px);margin:10px 0 22px">Tus números son <span class="x">solo tuyos.</span></h2>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg><div><b>Cifrado AES-256</b><span>Tus datos se guardan cifrados con una llave que vive en la zona segura de tu teléfono.</span></div></li>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg><div><b>PIN y huella</b><span>Bloqueo al abrir, con espera creciente si alguien intenta adivinar tu PIN.</span></div></li>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg><div><b>Sin cuentas ni servidores</b><span>Todo se queda en tu teléfono. No pedimos correo ni clave del banco.</span></div></li>
+            <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg><div><b>Respaldos con contraseña</b><span>Tus copias de seguridad también van cifradas; sin tu contraseña nadie las abre.</span></div></li>
+          </ul>
+        </div>
+        <div><div class="lock"><div class="ring"></div><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></svg></div></div>
+      </div>
+    </section>
+
+    <section id="descargar">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Descarga</div>
+        <h2 class="display">Instálala en <span class="x">un minuto.</span></h2>
+        <p>Fluxo todavía no está en Play Store: la descargas aquí, directo de su página oficial.</p>
+      </div>
+      <div class="download" id="instalar">
+        <div class="steps reveal">
+          <div class="step"><b>Descarga el archivo</b><span>Toca «Descargar Fluxo» desde tu teléfono Android (o escanea el código).</span></div>
+          <div class="step"><b>Permite la instalación</b><span>Android te preguntará si permites instalar apps de esta fuente: toca «Configuración» y activa «Permitir». Es normal para apps fuera de Play Store.</span></div>
+          <div class="step"><b>Abre y empieza</b><span>Elige tu nombre, tu ingreso y tu forma de repartirlo, o explora primero con datos de ejemplo.</span></div>
+          <a class="dl" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk" download style="margin-top:6px">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0A10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
+            <span>Descargar Fluxo 1.3<small>APK completo · 36 MB · teléfonos de 32 y 64 bits</small></span>
+          </a>
+        </div>
+        <div class="qr reveal">
+          <div class="eyebrow">¿Estás en la computadora?</div>
+          <div id="qr" role="img" aria-label="Código QR para abrir esta página en el teléfono"></div>
+          <div style="font-weight:700">Escanéalo con la cámara de tu teléfono</div>
+          <div class="verify"><b style="color:var(--fg)">Verifica el archivo (opcional)</b><br>SHA-256: <code>7240e53755e8c3fca1a38d549cc7665c0b408590be8a93e62ec7269816c5d737</code></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head reveal"><div class="eyebrow">Preguntas</div><h2 class="display">Lo que nos <span class="x">preguntan.</span></h2></div>
+      <div class="reveal">
+        <details><summary>¿Fluxo es gratis?</summary><p>Sí. Descárgala y úsala completa sin pagar nada.</p></details>
+        <details><summary>¿Necesita internet?</summary><p>No para funcionar. Solo usa internet para traer la tasa del BCV y el historial del dólar; si no hay conexión, sigue con la última tasa que guardaste.</p></details>
+        <details><summary>¿Es seguro instalar un APK?</summary><p>Este APK está firmado con la llave oficial de Fluxo y solo se publica en esta página. Puedes comparar el código SHA-256 de arriba para confirmar que el archivo no fue modificado. No la descargues de otros sitios.</p></details>
+        <details><summary>¿Fluxo ve mis cuentas del banco?</summary><p>No. Fluxo nunca te pide claves ni se conecta a tu banco. El registro automático es opcional: lee en tu teléfono las notificaciones de pago que ya te llegan y te propone el movimiento; nada sale del teléfono.</p></details>
+        <details><summary>¿Sirve para mi negocio?</summary><p>Sí. Tiene un ámbito Negocio separado: ventas, costos, margen, facturas con IVA y el libro de compras del mes para tu contador.</p></details>
+        <details><summary>¿Y si cambio de teléfono?</summary><p>En Ajustes → Hacer respaldo creas una copia cifrada con tu contraseña. En el teléfono nuevo, instala Fluxo y toca Restaurar.</p></details>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span class="brand"><span class="wm" style="font-size:22px">FLU<span class="x">X</span>O</span>&nbsp;· Tu dinero, con dirección.</span>
+    <span>El contenido de inversión es educativo, no una recomendación. © 2026 Fluxo</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+// Carrusel del teléfono
+(function () {
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('#screen img'));
+  var dots = document.getElementById('dots'), cap = document.getElementById('cap'), i = 0, t;
+  imgs.forEach(function (_, k) { var d = document.createElement('i'); if (!k) d.className = 'on'; dots.appendChild(d); });
+  function show(n) {
+    imgs[i].classList.remove('on'); dots.children[i].classList.remove('on');
+    i = n; imgs[i].classList.add('on'); dots.children[i].classList.add('on'); cap.textContent = imgs[i].dataset.cap;
+  }
+  function next() { show((i + 1) % imgs.length); }
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) t = setInterval(next, 3200);
+  document.getElementById('screen').addEventListener('click', function () { clearInterval(t); next(); });
+})();
+// Aparecer al bajar
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 });
+  els.forEach(function (e) { io.observe(e); });
+})();
+// Código QR hacia esta página
+(function () {
+  try {
+    var qr = qrcode(0, 'M'); qr.addData('https://jagpromax.github.io/fluxo/'); qr.make();
+    document.getElementById('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch (e) { document.getElementById('qr').style.display = 'none'; }
+})();
+</script>
+</body>
+</html>
