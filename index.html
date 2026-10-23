@@ -138,6 +138,24 @@ section{padding:20px 0 90px}
 .verify{margin-top:12px;background:var(--sunk);border-radius:14px;padding:12px 14px;font-size:12.5px;color:var(--muted);word-break:break-all;text-align:left;width:100%}
 .verify code{font-family:ui-monospace,Consolas,monospace;color:var(--fg);font-size:11.5px}
 
+
+/* Descarga con barra de progreso */
+.progreso{position:fixed;left:50%;bottom:20px;transform:translate(-50%,140%);width:min(460px,calc(100% - 32px));background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 20px;z-index:50;box-shadow:0 24px 80px rgba(0,0,0,.6);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.progreso.on{transform:translate(-50%,0)}
+.progreso .fila{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.progreso .fila svg{flex:0 0 40px}
+.progreso b{display:block;font-size:16px}
+.progreso small{color:var(--muted);font-size:13.5px}
+.progreso .pct{margin-left:auto;font-family:var(--display);font-weight:700;font-size:30px;line-height:1}
+.barra{height:10px;border-radius:6px;background:var(--sunk);overflow:hidden}
+.barra div{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#A48BFF,#7B5CFF 60%,#FF6B57);transition:width .2s linear;position:relative}
+.barra div::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:brillo 1.2s linear infinite}
+@keyframes brillo{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.progreso.listo .barra div{background:var(--good)}
+.progreso.listo .barra div::after{display:none}
+.progreso .nota{margin-top:12px;font-size:14px;color:var(--fg)}
+.progreso .cerrar{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+
 /* Preguntas */
 details{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:10px}
 summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px}
@@ -212,7 +230,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
           <span class="chip">Funciona sin internet</span>
           <span class="chip">Datos cifrados</span>
         </div>
-        <a class="dl" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk" download>
+        <a class="dl" data-apk="Fluxo.apk" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B0A10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
           <span>Descargar Fluxo<small>Android · versión 1.4 · 36 MB</small></span>
         </a>
@@ -347,7 +365,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
           <div class="step"><b>Descarga el archivo</b><span>Toca «Descargar Fluxo» desde tu teléfono Android (o escanea el código).</span></div>
           <div class="step"><b>Permite la instalación</b><span>Android te preguntará si permites instalar apps de esta fuente: toca «Configuración» y activa «Permitir». Es normal para apps fuera de Play Store.</span></div>
           <div class="step"><b>Abre y empieza</b><span>Elige tu nombre, tu ingreso y tu forma de repartirlo, o explora primero con datos de ejemplo.</span></div>
-          <a class="dl" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk" download style="margin-top:6px">
+          <a class="dl" data-apk="Fluxo.apk" href="https://github.com/JAGPROMAX/fluxo/releases/latest/download/Fluxo.apk" style="margin-top:6px">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0A10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
             <span>Descargar Fluxo 1.4<small>APK completo · 36 MB · teléfonos de 32 y 64 bits</small></span>
           </a>
@@ -374,6 +392,18 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
     </section>
   </div>
 </main>
+
+
+<div class="progreso" id="progreso" role="status" aria-live="polite">
+  <button class="cerrar" id="cerrar-progreso" aria-label="Cerrar">×</button>
+  <div class="fila">
+    <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="tp" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A48BFF"/><stop offset="1" stop-color="#5B3DF5"/></linearGradient></defs><rect width="64" height="64" rx="19" fill="url(#tp)"/><g transform="translate(-1.5 1.5)"><path d="M14 32 C22 32 26 46 38 46" fill="none" stroke="#0B0A10" stroke-width="7" stroke-linecap="round" opacity=".42"/><path d="M14 46 C24 46 26 18 50 18" fill="none" stroke="#0B0A10" stroke-width="7" stroke-linecap="round"/><circle cx="50" cy="18" r="6.6" fill="#FF6B57"/></g></svg>
+    <div><b id="titulo-progreso">Descargando Fluxo</b><small id="estado-progreso">Preparando…</small></div>
+    <span class="pct" id="pct">0%</span>
+  </div>
+  <div class="barra"><div id="relleno"></div></div>
+  <div class="nota" id="nota-progreso" hidden></div>
+</div>
 
 <footer>
   <div class="wrap row">
@@ -404,6 +434,58 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 });
   els.forEach(function (e) { io.observe(e); });
 })();
+
+// Descarga con barra de progreso (igual que Tu Conexión Diaria): la descarga directa de un APK
+// a veces se queda trabada en 100 % en Chrome, así que la página baja el archivo y se lo entrega completo.
+(function () {
+  var origen = 'https://raw.githubusercontent.com/JAGPROMAX/fluxo/apk/';
+  var caja = document.getElementById('progreso'), relleno = document.getElementById('relleno');
+  var pct = document.getElementById('pct'), estado = document.getElementById('estado-progreso');
+  var titulo = document.getElementById('titulo-progreso'), nota = document.getElementById('nota-progreso');
+  var ocupado = false;
+  document.getElementById('cerrar-progreso').onclick = function () { caja.classList.remove('on'); };
+  function mb(n) { return (n / 1e6).toFixed(1).replace('.', ','); }
+  document.querySelectorAll('[data-apk]').forEach(function (boton) {
+    boton.addEventListener('click', async function (ev) {
+      if (!window.fetch || !window.ReadableStream) return; // navegador viejo: enlace normal
+      ev.preventDefault();
+      if (ocupado) { caja.classList.add('on'); return; }
+      ocupado = true;
+      caja.classList.remove('listo'); caja.classList.add('on');
+      relleno.style.width = '0%'; pct.textContent = '0%'; nota.hidden = true;
+      titulo.textContent = 'Descargando Fluxo'; estado.textContent = 'Conectando…';
+      try {
+        var r = await fetch(origen + boton.dataset.apk, { cache: 'no-store' });
+        if (!r.ok || !r.body) throw new Error('HTTP ' + r.status);
+        var total = +r.headers.get('content-length') || 0, lector = r.body.getReader(), partes = [], recibido = 0, t0 = Date.now();
+        for (;;) {
+          var paso = await lector.read();
+          if (paso.done) break;
+          partes.push(paso.value); recibido += paso.value.length;
+          var seg = (Date.now() - t0) / 1000, vel = seg > 0.5 ? recibido / seg : 0;
+          if (total) {
+            var p = Math.round(recibido / total * 100);
+            relleno.style.width = p + '%'; pct.textContent = p + '%';
+            var resta = vel ? Math.ceil((total - recibido) / vel) : 0;
+            estado.textContent = mb(recibido) + ' de ' + mb(total) + ' MB' + (resta ? ' · faltan ' + (resta > 60 ? Math.ceil(resta / 60) + ' min' : resta + ' s') : '');
+          } else estado.textContent = mb(recibido) + ' MB';
+        }
+        var url = URL.createObjectURL(new Blob(partes, { type: 'application/vnd.android.package-archive' }));
+        var a = document.createElement('a'); a.href = url; a.download = boton.dataset.apk;
+        document.body.appendChild(a); a.click(); a.remove();
+        caja.classList.add('listo'); relleno.style.width = '100%'; pct.textContent = '✓';
+        titulo.textContent = '¡Descarga lista!'; estado.textContent = 'Fluxo.apk · ' + mb(recibido) + ' MB';
+        nota.hidden = false;
+        nota.innerHTML = 'Si Chrome pregunta, toca <b>Descargar de todos modos</b> y luego <b>Abrir</b>. Si Android lo pide, permite instalar apps de esta fuente.';
+        setTimeout(function () { URL.revokeObjectURL(url); }, 300000);
+      } catch (e) {
+        estado.textContent = 'Probando de otra forma…';
+        location.href = boton.href;
+      } finally { ocupado = false; }
+    });
+  });
+})();
+
 // Código QR hacia esta página
 (function () {
   try {
