@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fluxo · Tu dinero, con dirección</title>
 <meta name="description" content="Fluxo: la app de finanzas personales y de negocio hecha para Venezuela. Dólares y bolívares, tasa BCV automática, metas, deudas y tu futuro en una sola app.">
+<meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0B0A10">
 <meta property="og:title" content="Fluxo · Tu dinero, con dirección">
 <meta property="og:description" content="Finanzas personales y de negocio para Venezuela, en $ y Bs. Descarga gratis para Android.">
-<meta property="og:image" content="https://jagpromax.github.io/fluxo/img/icon.png">
+<meta property="og:image" content="https://mifluxo.web.app/img/icon.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -215,7 +216,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0B0A10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg>
           <span>Descargar Fluxo<small>Android · versión 1.3 · 36 MB</small></span>
         </a>
-        <div class="meta">Android 7 o superior · <a href="#instalar">Cómo instalarla</a> · <a href="https://github.com/JAGPROMAX/fluxo/releases">Todas las versiones</a></div>
+        <div class="meta">Android 7 o superior · <a href="#instalar">Cómo instalarla</a></div>
       </div>
       <div>
         <div class="phone-stage">
@@ -339,7 +340,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
       <div class="sec-head reveal">
         <div class="eyebrow">Descarga</div>
         <h2 class="display">Instálala en <span class="x">un minuto.</span></h2>
-        <p>Fluxo todavía no está en Play Store: la descargas aquí, directo de su página oficial.</p>
+        <p>Fluxo todavía no está en Play Store: la descargas aquí, directo de su página.</p>
       </div>
       <div class="download" id="instalar">
         <div class="steps reveal">
@@ -406,7 +407,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;a
 // Código QR hacia esta página
 (function () {
   try {
-    var qr = qrcode(0, 'M'); qr.addData('https://jagpromax.github.io/fluxo/'); qr.make();
+    var qr = qrcode(0, 'M'); qr.addData('https://mifluxo.web.app/'); qr.make();
     document.getElementById('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
   } catch (e) { document.getElementById('qr').style.display = 'none'; }
 })();
